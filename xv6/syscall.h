@@ -20,5 +20,8 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+//test system call
 #define SYS_getyear 22
+//assign a new index number (23) to the required system call
+#define SYS_getProcessInfo 23
 
