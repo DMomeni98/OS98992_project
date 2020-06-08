@@ -544,15 +544,34 @@ procdump(void)
 int sys_getProcessInfo(void)
 {
   struct proc_info *procs;
+  //get parameter for function and return when done!
   argptr(0,(void*)&procs, sizeof(procs));
   struct proc *p;
-  int i = 0;
+  int counter = 0;
+  //select process that are running and runnable
+  //and add them to result array
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == RUNNING || p->state == RUNNABLE){
-        procs[i].pid = p->pid;
-        procs[i].memsize = p->sz;
-        i++;
+        procs[counter].pid = p->pid;
+        procs[counter].memsize = p->sz;
+        counter++;
     }
+  }
+
+  // sort processes by size using bubble sort
+  struct proc_info max;
+  for(int i=0;i<counter;i++){
+      int temp=0;
+      max.memsize=-1;
+      max.pid=0;
+      for(int j=0;j<counter-i;j++){
+          if(procs[j].memsize>max.memsize) {
+              max = procs[j];
+              temp=j;
+          }
+      }
+      procs[temp]=procs[counter-i-1];
+      procs[counter-i-1]=max;
   }
   return 0;
 }
