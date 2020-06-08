@@ -1,6 +1,13 @@
 struct stat;
 struct rtcdate;
 
+//suggested struct structure
+struct proc_info
+{
+  int pid;
+  int memsize;
+};
+
 // system calls
 int fork(void);
 int exit(void) __attribute__((noreturn));
@@ -24,7 +31,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int getyear(void);
-int getProcessInfo(void);
+int getProcessInfo(struct proc_info*);
 
 // ulib.c
 int stat(const char*, struct stat*);

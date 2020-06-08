@@ -14,6 +14,13 @@ struct {
 
 static struct proc *initproc;
 
+//suggested strcut structure
+struct proc_info
+{
+  int pid;
+  int memsize;
+};
+
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
@@ -531,4 +538,21 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+//system call function implementation
+int sys_getProcessInfo(void)
+{
+  struct proc_info *procs;
+  argptr(0,(void*)&procs, sizeof(procs));
+  struct proc *p;
+  int i = 0;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state == RUNNING || p->state == RUNNABLE){
+        procs[i].pid = p->pid;
+        procs[i].memsize = p->sz;
+        i++;
+    }
+  }
+  return 0;
 }
