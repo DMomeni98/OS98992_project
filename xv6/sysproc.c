@@ -89,3 +89,20 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+//is just used to call waitx() which is present in proc.c . The sys_scheduling() function in
+//sysproc.c although does one job - it passes the
+//parameters (rtime,wtime) to the scheduling() of proc.c , just like all other system calls do.
+int sys_scheduling(void)
+{
+
+  int *wtime;
+  int *rtime;
+  
+  if(argptr(0, (char**)&wtime, sizeof(int)) < 0)
+    return -1;
+
+  if(argptr(1, (char**)&rtime, sizeof(int)) < 0)
+    return -1;
+  return scheduling(wtime ,rtime);
+}
