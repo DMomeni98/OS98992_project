@@ -112,6 +112,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  //stime (records CREATION TIME) , etime (records END TIME) , rtime (calculates RUN TIME)
+  //& iotime (calculates IO TIME ) fields added to
+  //proc structure of proc.h file
   p->stime = ticks;
   p->etime = 0;
   p->rtime = 0;
@@ -539,8 +542,17 @@ procdump(void)
   }
 }
 
-int
-scheduling(void)
+//  HOW stime,etime & rtime ARE CALCULATED :
+
+// - stime is recoreded in allocproc() function of proc.c.(When process is born)
+// - etime is recorded in exit() function (i.e when child exists, ticks are recorded) of proc.c.
+// - rtime is updated in trap() function of trap.c .(IF STATE IS RUNNING , THEN UPDATE rtime)
+// - iotime is updated in trap() function of trap.c.(IF STATE IS SLEEPING , THEN UPDATE wtime)
+
+//so we have to change trap.c file as well.
+
+//Copy the code of wait() and make some changes to it to build the new syscall
+int scheduling(int * wtime , int * rtime)
 {
   struct proc *p;
   int havekids, pid;
@@ -565,6 +577,10 @@ scheduling(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+//   Searched for a zombie child of parent in the proc table.
+// When the child was found , following pointers get updated :
+      *wtime= p->etime - p->stime - p->rtime - p->iotime;
+      *rtime=p->rtime;
         release(&ptable.lock);
         return pid;
       }
