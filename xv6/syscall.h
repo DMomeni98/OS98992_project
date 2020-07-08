@@ -20,3 +20,6 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+//syscalls no. 22 & 23 are implemented in phase_1
+//assign a new index number (24) to the required system call
+#define SYS_schduling 24
